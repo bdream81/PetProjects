@@ -1,11 +1,9 @@
 from logging import Manager
-
-# from aiogram.dispatcher.filters import state
 import configs
 
 from aiogram.types import Message, CallbackQuery
 from aiogram import Bot, Dispatcher, executor
-from aiogram.contrib.fsm_storage.memory import MemoryStorage #накопитель-стореж
+from aiogram.contrib.fsm_storage.memory import MemoryStorage 
 import psycopg2
 
 from text_buttons import TextButtons
@@ -33,15 +31,15 @@ sts = configs.MoiSostoyania()
 
 @dp.message_handler(commands=["start"])
 async def listen(message: Message):
-    await message.answer(text="Добро пожаловать в телеграм-бот 'Империя Пиццы' 🍕🍕🍕")
+    await message.answer(text="Добро пожаловать в телеграм-бот 'Империи Пиццы' 🍕🍕🍕")
     await sts.main_menu.set()
-    return await message.answer(text="Выберите категорию:",reply_markup=ibtns.main_btns())
+    return await message.answer(text="Выберите категорию:", reply_markup=ibtns.main_btns())
     
-@dp.callback_query_handler(state=sts.main_menu)#оно лежит в состоянии
-async def mainmenu(call:CallbackQuery): #call - переменная в которой будет хранится информация этой кнопки
+@dp.callback_query_handler(state=sts.main_menu)
+async def mainmenu(call:CallbackQuery): 
     if call.data == "menu":
         await sts.menu.set()
-        return await call.message.edit_text(text = "Выберите что хотели посмотреть:", reply_markup=ibtns.menu_btns())#edit редактирует кнопки и месс
+        return await call.message.edit_text(text = "Выберите что хотели посмотреть:", reply_markup=ibtns.menu_btns())
     
     elif call.data == "shares":
         postgreSQL_select_Query = "SELECT * FROM aksii"
@@ -84,7 +82,7 @@ async def kategoria_menu(call:CallbackQuery):
         zavtrak = cursor.fetchall()
         await sts.zavtrak.set()
         for row in zavtrak:
-            file = open(row[2], "rb") #rb -читать в бинарном режиме
+            file = open(row[2], "rb")
             photo = file.read()
             file.close()
             await bot.send_photo(chat_id=call.message.chat.id, photo=photo)
@@ -179,20 +177,19 @@ async def menuzakuski(call: CallbackQuery):
         return await call.message.edit_text(text = "Выберите что хотели посмотреть:", reply_markup=ibtns.menu_btns())
 
 
-@dp.callback_query_handler(state=sts.shares)
-async def podrobnee_shares(call: CallbackQuery):
-    get_shares_definition_cmd = f"SELECT * FROM aksii WHERE id = {call.data};"
 
-    cursor.execute(get_shares_definition_cmd)
-    share_definition = cursor.fetchone()
-    
-    await bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=share_definition[3], reply_markup=None)
-   
 @dp.callback_query_handler(state=sts.shares)
 async def kategoryshares(call: CallbackQuery):
-    if call.data=="back_main_menu":
+    if call.data=="back":
         await sts.main_menu.set()
         return await call.message.edit_text(text = "Выберите категорию:", reply_markup=ibtns.main_btns())
+    else:
+        get_shares_definition_cmd = f"SELECT * FROM aksii WHERE id = {call.data};"
+
+        cursor.execute(get_shares_definition_cmd)
+        share_definition = cursor.fetchone()
+        
+        return await bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text=share_definition[3], reply_markup=None)    
 
 @dp.callback_query_handler(state=sts.vacancies)
 async def kategoria_vacancies(call:CallbackQuery):
@@ -235,6 +232,11 @@ async def aboutcompany(call: CallbackQuery):
     if call.data=="back":
         await sts.main_menu.set()
         return await call.message.edit_text(text = "Выберите категорию:", reply_markup=ibtns.main_btns())
+
+
+if __name__ == "__main__":
+    executor.start_polling(dispatcher=dp)
+
 
 
 

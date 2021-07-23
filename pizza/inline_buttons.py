@@ -23,7 +23,7 @@ class InlineButtons:
     def menu_btns(self):
         markup = InlineKeyboardMarkup()
 
-        breakfasts = InlineKeyboardButton(text='Завтраки', callback_data='breakfasts') # call_data инф о кнопке
+        breakfasts = InlineKeyboardButton(text='Завтраки', callback_data='breakfasts')
         pizza = InlineKeyboardButton(text='Пиццы', callback_data='pizza')
         rolls = InlineKeyboardButton(text='Роллы', callback_data='rolls')
         salads = InlineKeyboardButton(text='Салаты', callback_data='salads')
@@ -35,11 +35,9 @@ class InlineButtons:
         return markup       
 
     def shares_btn(self, id_):
-        markup = InlineKeyboardMarkup()#встроенная разметка клавиатуры
-        btn = InlineKeyboardButton(text='Подробнее', callback_data=id_) #InlineKeyboardButton - встроенная кнопка клавиатуры
-        back_main_menu = InlineKeyboardButton(text='🔙', callback_data='back_main_menu')
-        markup.add(btn) # markup - разметка, наценка
-        markup.add(back_main_menu)
+        markup = InlineKeyboardMarkup()
+        btn = InlineKeyboardButton(text='Подробнее', callback_data=id_) 
+        markup.add(btn) 
         return markup
 
     def vacancy_btns(self):
@@ -57,7 +55,7 @@ class InlineButtons:
         markup.add(btn)
         return markup
 
-    def comman_btn(self, name): # печатает любую кнопку
+    def comman_btn(self, name):
         markup = InlineKeyboardMarkup()
         btn = InlineKeyboardButton(text=name, callback_data=str(name))        
         markup.add(btn)  
@@ -68,11 +66,5 @@ class InlineButtons:
         back = InlineKeyboardButton(text='🔙', callback_data="back")
         markup.add(back)
         return markup
-
-    # def back_main_btn(self):
-    #     markup = InlineKeyboardMarkup()
-    #     back_main = InlineKeyboardButton(text="🔙", callback_data="back_main_btn")
-    #     markup.add(back_main)
-    #     return markup
 
     
